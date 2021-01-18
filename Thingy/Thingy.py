@@ -1,5 +1,15 @@
 from bluepy import btle, thingy52
 import binascii
+import signal
+
+def shutDown(signum, frame):
+    print("# Disconnecting...")
+    thingy.disconnect()
+    exit(0)
+# end
+
+signal.signal(signal.SIGINT, shutDown)
+
 
 MAC_ADDRESS = None
 
@@ -26,14 +36,18 @@ print("# Creating new delegate class to handle notifications...")
 class NewDelegate(btle.DefaultDelegate):
     def handleNotification(self, hnd, data):
         if (hnd == thingy52.e_temperature_handle):
-            print("Notification: Temperature received: {}".format(repr(data)))
+            print("Notification Temperature received: {}".format((self.reprData(data) / 256)))
         # end
         if (hnd == thingy52.e_gas_handle):
-            print("Notification: Gas received: {}".format(repr(data)))
+            print("Notification Gas received: {}".format(self.reprData(data)))
         # end
-        if (hnd == thingy52.ui_button_handle):
-            print("Notification: Button press received: {}".format(repr(data)))
+        if (hnd == thingy52.e_humidity_handle):
+            print("Notification Humidity received: {}".format(self.reprData(data)))
         # end
+    # end
+
+    def reprData(self, data):
+        return int.from_bytes(data, byteorder = 'big')
     # end
 # end
 
@@ -47,18 +61,21 @@ thingy.setDelegate(NewDelegate())
 
 print("# Configuring and enabling environment notifications...")
 thingy.environment.enable()
-thingy.environment.configure(temp_int = 1000, gas_mode_int = 2)
+thingy.environment.configure(temp_int = 1000, humid_int = 1000, gas_mode_int = 2)
 thingy.environment.set_temperature_notification(True)
 thingy.environment.set_gas_notification(True)
+thingy.environment.set_humidity_notification(True)
 
 # print("# Configuring and enabling button press notification...")
 # thingy.ui.enable()
 # thingy.ui.set_btn_notification(True)
 
 print("# Waiting for three notifications...")
-thingy.waitForNotifications(timeout = 5)
-thingy.waitForNotifications(timeout = 5)
-thingy.waitForNotifications(timeout = 5)
+while True:
+    thingy.waitForNotifications(timeout = 5)
+    thingy.waitForNotifications(timeout = 5)
+    thingy.waitForNotifications(timeout = 5)
+# end
 
 print("# Disconnecting...")
 thingy.disconnect()
