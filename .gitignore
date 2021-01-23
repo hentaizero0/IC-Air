@@ -263,11 +263,7 @@ dmypy.json
 .prof
 
 ### vscode ###
-<<<<<<< HEAD
 .vscode/
-=======
-.vscode/*
->>>>>>> azure
 *.code-workspace
 
 ### Windows ###
