@@ -1,12 +1,12 @@
-import subprocess
 import time
 import copy
 
 from datetime import datetime
 
-from Azure import Database
-from PMSensor import PMSensor
-from Thingy import Thingy, Delegate
+from Azure.Database import Database
+from PMSensor.PMSensor import PMSensor
+from Thingy.Thingy import Thingy
+from Thingy.Delegate import Delegate
 
 def main():
     database = Database()
