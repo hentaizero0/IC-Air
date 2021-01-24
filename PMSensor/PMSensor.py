@@ -13,7 +13,7 @@ with open(logName, 'wb') as csvFile:
         readSerial = ser.readline()
         if ("No" not in readSerial):
             PMdata = readSerial.split(',')
-            print(readSerial)
+            print("{},{}".format([PMdata[0]], [PMdata[1][:-2]]))
             writer.writerow([timeStamp]+[PMdata[0]]+[PMdata[1][:-2]])
             time.sleep(1)
     # end
