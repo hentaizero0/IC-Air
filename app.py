@@ -14,6 +14,7 @@ def main():
     delegate = Delegate()
     thingy = Thingy(delegate)
 
+    database.connect()
     thingy.scan()
     thingy.connect()
 

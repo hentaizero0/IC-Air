@@ -11,6 +11,7 @@ class Database:
         self._driver= 'FreeTDS'
         self._connection = None
         self._cursor = None
+        self._columnList = "TheTime, PMData, Pressure, Temperature, Humidity, CO2, TVOC"
     # end
 
     def connect(self):
@@ -19,6 +20,15 @@ class Database:
     # end
 
     def insert(self, data):
-        self._cursor.execute("INSERT INTO dbo.EnvData VALUES ({})".format(data))
+        self._cursor.execute("INSERT INTO [dbo].[EnvData] ({}) VALUES ({})".format(self._columnList, data))
+    # end
+
+    def select(self):
+        self._cursor.execute("SELECT TOP (1000) * FROM [dbo].[EnvData]")
+        row = self._cursor.fetchone()
+        while row:
+            print (row)
+            row = self._cursor.fetchone()
+        # end
     # end
 # end
