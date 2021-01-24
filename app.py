@@ -1,42 +1,39 @@
 import subprocess
 import time
+import copy
 
 from datetime import datetime
-from Azure.Database import Database
 
+from Azure import Database
+from PMSensor import PMSensor
+from Thingy import Thingy, Delegate
 
 def main():
-    pass
-    # 1. add executable mode to each shell script
-    subprocess.run(args = ["chmod", "-x","./PMSensor/run.sh", "./Thingy/run.sh", "./Fan/run.sh"])
     database = Database()
-    database.connect()
+    pmSensor = PMSensor()
+    delegate = Delegate()
+    thingy = Thingy(delegate)
 
-    # 2. run each processes
+    thingy.scan()
+    thingy.connect()
+
+    lastPress = 0
+    lastTemp = 0
+    lastHumid = 0
+    lastCO2 = 0
+    lastTVOC = 0
+
     try:
-        PMSensorProc = subprocess.Popen(["./PMSensor/run.sh"])
-        thingyProc = subprocess.Popen(["./Thingy/run.sh"])
-        fanProc = subprocess.Popen(["./Fan/run.sh"])
-
-        # TODO: some reuqired operations and debug
-        lastPress = 0
-        lastTemp = 0
-        lastHumid = 0
-        lastCO2 = 0
-        lastTVOC = 0
         while True:
-            pass
             timeStamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
-            (PMData, PMError) = PMSensorProc.comunicate()
-            if PMError:
-                raise PMError
-            # end
 
-            (thingyData, thingyError) = thingyProc.communicate()
-            if thingyError:
-                raise thingyError
-            # end
+            PMData = pmSensor.getData()
+            thingy.run()
+            thingyData = copy.deepcopy(delegate.getData())
+            delegate.resetData()
+
             temp = thingyData.split(",")
+            print(thingyData)
             for i in temp:
                 if i == "" or i == None:
                     continue
@@ -62,16 +59,18 @@ def main():
                     lastTVOC = i[11: 13]
                 # end
             # end
-
             envData = "{},{},{},{},{}".format(lastPress, lastTemp, lastHumid, lastCO2, lastTVOC)
+            print("upload data")
             database.insert("{},{},{}".format(timeStamp, PMData, envData))
             time.sleep(1)
         # end
-    except:
-        pass
+    except Exception as error:
+        print(error)
+    finally:
+        thingy.disconnect()
     # end
 # end
 
-if "__name__" == "__main__":
+if __name__ == "__main__":
     main()
 # end

@@ -6,4 +6,4 @@ sudo cp freetds.conf . /etc/freetds/
 sudo cp odbcinst.ini . /etc/
 sudo cp odbc.ini . /etc
 
-pip3 install pyodbc
+sudo pip3 install pyodbc

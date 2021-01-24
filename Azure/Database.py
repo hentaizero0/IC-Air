@@ -1,10 +1,8 @@
-
 # Setup Instruction: http://mdupont.com/Blog/Raspberry-Pi/azure-python3.html
 
 import pyodbc
 
 class Database:
-    pass
     def __init__(self):
         self._server = 'test-database.database.windows.net'
         self._database = 'test-database'
