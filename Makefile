@@ -6,5 +6,5 @@ default:
 	sudo python3 app.py
 
 clean:
-	rm -rf ./*/__pycache__
-	rm -rf ./*/*.pyc
+	sudo rm -rf ./*/__pycache__
+	sudo rm -rf ./*/*.pyc
