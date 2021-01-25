@@ -4,7 +4,7 @@ import datetime
 import time
 
 ser = serial.Serial('/dev/ttyACM0', 9600)
-logName = "./" + datetime.datetime.now().strftime("%Y-%m-%d_%H:%M") + ".csv"
+logName = "./" + datetime.datetime.now().strftime("%Y-%m-%d_%H_%M") + ".csv"
 with open(logName, 'wb') as csvFile:
     writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     writer.writerow(["time"]+["pm2.5"]+["pm10"])
