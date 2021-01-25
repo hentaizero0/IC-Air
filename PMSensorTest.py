@@ -9,7 +9,7 @@ with open(logName, 'wb') as csvFile:
     writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     writer.writerow(["time"]+["pm2.5"]+["pm10"])
     while True:
-        timeStamp = datetime.datetime.now().strftime("%Y/%m/%d-%H:%M:%S")
+        timeStamp = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
         readSerial = ser.readline()
         if ("No" not in readSerial):
             PMdata = readSerial.split(',')
