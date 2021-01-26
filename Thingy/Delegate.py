@@ -43,28 +43,28 @@ class Delegate(btle.DefaultDelegate):
             tempDec = int(teptep[-2:], 16)
             tempTotal = 'Temperature: {}.{} degCelsius'.format(tempInt, tempDec)
             self._data += [tempTotal]
-            print(tempTotal, end = ",")
+            # print(tempTotal, end = ",")
         # end
 
         if (hnd == thingy52.e_pressure_handle):
             (pressure_int, pressure_dec) = self._extract_pressure_data(data)
             pressure = 'Pressure: {}.{} hPa'.format(pressure_int, pressure_dec)
             self._data += [pressure]
-            print(pressure, end = ",")
+            # print(pressure, end = ",")
         # end
 
         if (hnd == thingy52.e_humidity_handle):
             teptep = binascii.b2a_hex(data)
             humidity = 'Humidity: {} %'.format(self._str_to_int(teptep))
             self._data += [humidity]
-            print(humidity, end = ",")
+            # print(humidity, end = ",")
         # end
 
         if (hnd == thingy52.e_gas_handle):
             (eco2, tvoc) = self._extract_gas_data(data)
             gas = 'CO2: {} ppm,TVOC ppb: {} %'.format(eco2, tvoc)
             self._data += gas.split(',')
-            print(gas, end = ",")
+            # print(gas, end = ",")
         # end
     # end
 

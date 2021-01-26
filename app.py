@@ -1,5 +1,6 @@
 import time
 import copy
+import re
 
 from datetime import datetime
 
@@ -33,35 +34,33 @@ def main():
             thingyData = copy.deepcopy(delegate.getData())
             delegate.resetData()
 
-            temp = thingyData.split(",")
-            print(thingyData)
-            for i in temp:
+            for i in thingyData:
                 if i == "" or i == None:
                     continue
                 # end
 
                 if "Pressure" in i:
-                    lastPress = i[11: 18]
+                    lastPress = float(re.findall('\d+.\d+', i)[0])
                 # end
 
                 if "Humidity" in i:
-                    lastHumid = i[11: 18]
+                    lastHumid = int(re.findall('\d+', i)[0])
                 # end
 
                 if "Temperature" in i:
-                    lastTemp = i[14: 19]
+                    lastTemp = float(re.findall('\d+.\d+', i)[0])
                 # end
 
                 if  "CO2" in i:
-                    lastCO2 = i[6: 10]
+                    lastCO2 = int(re.findall('\d+', i)[1])
                 # end
 
                 if "TVOC ppb" in i:
-                    lastTVOC = i[11: 13]
+                    lastTVOC = int(re.findall('\d+', i)[0])
                 # end
             # end
             envData = "{},{},{},{},{}".format(lastPress, lastTemp, lastHumid, lastCO2, lastTVOC)
-            print("upload data")
+            print(envData)
             database.insert("{},{},{}".format(timeStamp, PMData, envData))
             time.sleep(1)
         # end
