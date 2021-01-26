@@ -13,3 +13,6 @@ All participants belongs to the University of Washington, Seattle. All rights re
 - Thomas Shen
 - Yue Yu
 - April Zhao
+
+### Usage
+``` sudo python3 app.py ```

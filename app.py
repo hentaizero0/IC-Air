@@ -30,6 +30,8 @@ def main():
             timeStamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
             PMData = pmSensor.getData()
+
+            # Actually, here is a call back, but I don't know how to do better.
             thingy.run()
             thingyData = copy.deepcopy(delegate.getData())
             delegate.resetData()
@@ -60,7 +62,7 @@ def main():
                 # end
             # end
             envData = "{},{},{},{},{}".format(lastPress, lastTemp, lastHumid, lastCO2, lastTVOC)
-            print(envData)
+            # print(envData)
             database.insert("{},{},{}".format(timeStamp, PMData, envData))
             time.sleep(1)
         # end
