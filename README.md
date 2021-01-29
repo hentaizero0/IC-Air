@@ -15,4 +15,6 @@ All participants belongs to the University of Washington, Seattle. All rights re
 - April Zhao
 
 ### Usage
-``` sudo python3 app.py ```
+1. Before running, please check the `README.md` in each module folder.
+2. Then, you can start the centrol controller `app.py`.
+   ``` sudo python3 app.py ```
