@@ -6,7 +6,7 @@ processing. Functions are encapsulated and used in `app.py`. </br>
 </br>
 We may change this to Microsoft Azure IoT Hub.
 
-### Packages
+### Dependencies
 - [UnicODBC](http://www.unixodbc.org/)
 - [FreeTDS](https://www.freetds.org/)
 - [PyODBC](https://github.com/mkleehammer/pyodbc)

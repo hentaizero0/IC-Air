@@ -16,5 +16,9 @@ All participants belongs to the University of Washington, Seattle. All rights re
 
 ### Usage
 1. Before running, please check the `README.md` in each module folder.
+   - [Azure](Azure/README.md)
+   - [Fan Controller](FanController/README.md)
+   - [PM Sensor](PMSensor/README.md)
+   - [Thingy](Thingy/README.md)
 2. Then, you can start the centrol controller `app.py`.
    ``` sudo python3 app.py ```
