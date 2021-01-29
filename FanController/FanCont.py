@@ -14,7 +14,7 @@ GPIO.hardware_PWM(HSYNC, 25000, 1000000) #set up defalut value
 print("real range: {}".format(GPIO.get_PWM_real_range(HSYNC)))
 while True:
     #GPIO.set_PWM_frequency(HSYNC, 25000)
-    print(GPIO.get_PWM_dutycycle(18))
+    #print(GPIO.get_PWM_dutycycle(18))
     time.sleep(1)
     GPIO.set_PWM_dutycycle(18, 170) #change fan speed, 0~255
     print(GPIO.get_PWM_dutycycle(18))
@@ -23,5 +23,5 @@ while True:
     print(GPIO.get_PWM_range(HSYNC))
 # end
 
-GPIO.write(HSYNC, 0)
-GPIO.stop()
+#GPIO.write(HSYNC, 0)
+#GPIO.stop()
