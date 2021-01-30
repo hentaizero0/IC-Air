@@ -8,5 +8,5 @@ later processing. Functions are encapsulated and used in `app.py`. </br>
 - [bluepy](https://github.com/IanHarvey/bluepy)
 
 ### Usage
-0. Install required packages.
+0. Install required packages.</br>
    `sudo pip3 install bluepy`
