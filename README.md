@@ -20,5 +20,5 @@ All participants belongs to the University of Washington, Seattle. All rights re
    - [Fan Controller](FanController/README.md)
    - [PM Sensor](PMSensor/README.md)
    - [Thingy](Thingy/README.md)
-2. Then, you can start the centrol controller `app.py`.
-   ``` sudo python3 app.py ```
+2. Then, you can start the centrol controller `app.py`.</br>
+   ` sudo python3 app.py `
