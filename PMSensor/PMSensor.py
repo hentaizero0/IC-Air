@@ -6,7 +6,12 @@ class PMSensor:
     # end
 
     def getData(self):
-        readSerial = self._serial.readline.decode('ascii')
+        temp = self._serial.readline()
+        if (temp == None or temp == ""):
+            return None
+        # end
+
+        readSerial = temp.decode('ascii')
         PMData = None
         if ("No" not in readSerial):
             # print(readSerial)
