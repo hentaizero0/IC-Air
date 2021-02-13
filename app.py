@@ -79,7 +79,7 @@ def main():
             # print(envData)
             # database.insert("{},{},{}".format(timeStamp, PMData, envData))
             csvWriter.writerow([timeStamp]+[PMData[0]]+[PMData[1]]+[lastPress]+[lastTemp]+[lastHumid]+[lastCO2]+[lastTVOC]+["3"])
-            print(PMData[0]+" "+PMData[1]+", Fan:3")
+            print(str(PMData[0])+" "+str(PMData[1])+", Fan:3")
             time.sleep(1)
         # end
     except Exception as error:
