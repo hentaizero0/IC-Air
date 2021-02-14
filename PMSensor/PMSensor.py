@@ -2,7 +2,7 @@ import serial
 
 class PMSensor:
     def __init__(self):
-        self._serial = serial.Serial('/dev/ttyACM0', 9600)
+        self._serial = serial.Serial('/dev/ttyACA0', 9600)
     # end
 
     def getData(self):
