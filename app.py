@@ -17,6 +17,7 @@ def main():
     delegate = Delegate()
     thingy = Thingy(delegate)
 
+    pmSensor.start()
     # database.connect()
     thingy.scan()
     thingy.connect()
@@ -26,23 +27,22 @@ def main():
     lastHumid = -1
     lastCO2 = -1
     lastTVOC = -1
-    lastPMData = [-1, -1]
+    lastPMDataPre = (-1, -1)
+    lastPMDataPost = (-1, -1)
 
     try:
         # assert os.path.exists("./logs/")
         logName = "./logs/" + datetime.now().strftime("%Y-%m-%d_%H:%M") + ".csv"
         csvFile = open(logName, 'w', newline = '')
         csvWriter = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        csvWriter.writerow(["time"]+["pm2.5"]+["pm10"]+["pressure"]+["temperature"]+["humidity"]+["co2"]+["tvoc"]+["fan"])
+        csvWriter.writerow(["time"]+["pm2.5_pre"]+["pm10_pre"]+["pm2.5_post"]+["pm10_post"]+["pressure"]+["temperature"]+["humidity"]+["co2"]+["tvoc"]+["fan"])
         while True:
             timeStamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
             PMData = pmSensor.getData()
-            if (PMData != None) and ("," in PMData):
-                PMData = PMData.split(',')
-                lastPMData = copy.deepcopy(PMData)
-            else:
-                PMData = copy.deepcopy(lastPMData)
+            if (PMData != []):
+                lastPMDataPre = copy.deepcopy(PMData[0])
+                lastPMDataPost = copy.deepcopy(PMData[1])
             # end
 
             # Actually, here is a call back, but I don't know how to do better.
@@ -78,7 +78,7 @@ def main():
             # envData = "{},{},{},{},{}".format(lastPress, lastTemp, lastHumid, lastCO2, lastTVOC)
             # print(envData)
             # database.insert("{},{},{}".format(timeStamp, PMData, envData))
-            csvWriter.writerow([timeStamp]+[PMData[0]]+[PMData[1]]+[lastPress]+[lastTemp]+[lastHumid]+[lastCO2]+[lastTVOC]+["3"])
+            csvWriter.writerow([timeStamp]+[lastPMDataPre[0]]+[lastPMDataPre[1]]+[lastPMDataPost[0]]+[lastPMDataPost[1]]+[lastPress]+[lastTemp]+[lastHumid]+[lastCO2]+[lastTVOC]+["3"])
             print(str(PMData[0])+" "+str(PMData[1])+", Fan:3")
             time.sleep(1)
         # end
@@ -86,6 +86,7 @@ def main():
         traceback.print_exc()
     finally:
         thingy.disconnect()
+        pmSensor.stop()
     # end
 # end
 
