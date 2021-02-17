@@ -1,3 +1,4 @@
+import FanController
 import time
 import copy
 import re
@@ -7,12 +8,14 @@ import traceback
 from datetime import datetime
 
 from Azure.IoTHub import IoTHub
+from FanController.FanController import FanController
 from PMSensor.PMSensor import PMSensor
 from Thingy.Thingy import Thingy
 from Thingy.Delegate import Delegate
 
 def main():
     iothub = IoTHub()
+    fan = FanController()
     pmSensor = PMSensor()
     delegate = Delegate()
     thingy = Thingy(delegate)
@@ -35,10 +38,12 @@ def main():
             timeStamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
             PMData = pmSensor.getData()
-            if (PMData != []):
+            if (PMData != ()):
                 lastPMDataPre = copy.deepcopy(PMData[0])
                 lastPMDataPost = copy.deepcopy(PMData[1])
             # end
+
+            fan.control(lastPMDataPre)
 
             # Actually, here is a call back, but I don't know how to do better.
             thingy.run()
@@ -92,6 +97,7 @@ def main():
     finally:
         thingy.disconnect()
         pmSensor.stop()
+        fan.shutdown()
     # end
 # end
 
