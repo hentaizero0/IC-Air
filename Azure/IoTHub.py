@@ -12,7 +12,6 @@ from azure.iot.device import IoTHubDeviceClient, Message
 # Define the JSON message to send to IoT Hub.
 
 class IoTHub:
-    pass
     def __init__(self):
         # The device connection string to authenticate the device with your IoT hub.
         self._connectionString = "HostName=ZephyrAir.azure-devices.net;DeviceId=Purifer;SharedAccessKey=4VqF3ln3HqyUHkh76zmXdWxVLI9FB9/4OBy6ChtMXCQ="
