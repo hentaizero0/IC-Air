@@ -15,7 +15,7 @@ class IoTHub:
     pass
     def __init__(self):
         # The device connection string to authenticate the device with your IoT hub.
-        self._connectionString = "HostName=TECHIN514.azure-devices.net;DeviceId=AirPurifer;SharedAccessKey=Li/0vZkctPP8f7Z+SuXV5J2iD8T6cusWzieqT1K8CgE="
+        self._connectionString = "HostName=ZephyrAir.azure-devices.net;DeviceId=Purifer;SharedAccessKey=4VqF3ln3HqyUHkh76zmXdWxVLI9FB9/4OBy6ChtMXCQ="
         self._client = None
     # end
 
