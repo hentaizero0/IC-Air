@@ -6,19 +6,19 @@ import traceback
 
 from datetime import datetime
 
-# from Azure.Database import Database
+from Azure.IoTHub import IoTHub
 from PMSensor.PMSensor import PMSensor
 from Thingy.Thingy import Thingy
 from Thingy.Delegate import Delegate
 
 def main():
-    # database = Database()
+    iothub = IoTHub()
     pmSensor = PMSensor()
     delegate = Delegate()
     thingy = Thingy(delegate)
 
     pmSensor.start()
-    # database.connect()
+    iothub.connect()
     thingy.scan()
     thingy.connect()
 
@@ -31,11 +31,6 @@ def main():
     lastPMDataPost = (-1, -1)
 
     try:
-        # assert os.path.exists("./logs/")
-        logName = "./logs/" + datetime.now().strftime("%Y-%m-%d_%H:%M") + ".csv"
-        csvFile = open(logName, 'w', newline = '')
-        csvWriter = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        csvWriter.writerow(["time"]+["pm2.5_pre"]+["pm10_pre"]+["pm2.5_post"]+["pm10_post"]+["pressure"]+["temperature"]+["humidity"]+["co2"]+["tvoc"]+["fan"])
         while True:
             timeStamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
@@ -75,11 +70,21 @@ def main():
                     lastTVOC = int(re.findall('\d+', i)[0])
                 # end
             # end
-            # envData = "{},{},{},{},{}".format(lastPress, lastTemp, lastHumid, lastCO2, lastTVOC)
-            # print(envData)
-            # database.insert("{},{},{}".format(timeStamp, PMData, envData))
-            csvWriter.writerow([timeStamp]+[lastPMDataPre[0]]+[lastPMDataPre[1]]+[lastPMDataPost[0]]+[lastPMDataPost[1]]+[lastPress]+[lastTemp]+[lastHumid]+[lastCO2]+[lastTVOC]+["3"])
-            print(str(PMData[0])+" "+str(PMData[1])+", Fan:3")
+
+            data = {
+                "time": timeStamp,
+                "pm2.5_pre": lastPMDataPre[0],
+                "pm10_pre": lastPMDataPre[1],
+                "pm2.5_post": lastPMDataPost[0],
+                "pm10_post": lastPMDataPost[1],
+                "pressure": lastPress,
+                "humidity": lastHumid,
+                "temperature": lastTemp,
+                "CO2": lastCO2,
+                "TVOC ppb": lastTVOC
+            }
+
+            iothub.send(data)
             time.sleep(1)
         # end
     except Exception as error:
