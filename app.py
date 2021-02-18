@@ -29,11 +29,11 @@ def calculate_fan_speed_rule(PMData):
         speed = 0.0
     elif (5.0 < PM10 <= 10.0):
         speed = 0.2
-    elif (10.0 < PMData <= 15.0):
+    elif (10.0 < PM10 <= 15.0):
         speed = 0.4
-    elif (15.0 < PMData <= 20.0):
+    elif (15.0 < PM10 <= 20.0):
         speed = 0.6
-    elif (20.0 < PMData <= 25.0):
+    elif (20.0 < PM10 <= 25.0):
         speed = 0.8
     else:  # (120.0, 120.0) < PMData
         speed = 1.0
