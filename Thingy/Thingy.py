@@ -54,7 +54,7 @@ class Thingy:
     # end
 
     def run(self):
-        print("# Waiting for notifications...")
+        # print("# Waiting for notifications...")
         self._thingy.waitForNotifications(timeout = 5)
         self._thingy.waitForNotifications(timeout = 5)
         self._thingy.waitForNotifications(timeout = 5)
