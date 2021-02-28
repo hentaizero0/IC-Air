@@ -10,6 +10,7 @@ class Thingy:
     # end
 
     def scan(self):
+        isFind = True
         print("# Looking for Thingy advertisment...")
         scanner = btle.Scanner()
         devices = scanner.scan(timeout = 3)
@@ -26,8 +27,11 @@ class Thingy:
 
         if (self._MAC_ADDRESS == None):
             print("### ERROR: MAC_ADDRESS is not set (and Thingy was not found)...")
-            exit(0)
+            # exit(0)
+            isFind = False
         # end
+        
+        return isFind
     # end
 
     def connect(self):

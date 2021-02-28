@@ -3,6 +3,7 @@
 .PHONY: default clean
 
 default:
+	sudo pigpiod
 	sudo python3 app.py
 
 clean:
