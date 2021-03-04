@@ -61,7 +61,7 @@ def main():
     lastPMDataPre = (-1, -1)
     # lastPMDataPost = (-1, -1)
 
-    pid = PID_initialize(p=10.0,i=1.0,d=1.0,setpoint=40.0)
+    pid = PID_initialize(p=10.0,i=1.0,d=1.0,setpoint=5.0)
 
     try:
         # logName = os.getcwd() + "/logs/" + datetime.now().strftime("%Y-%m-%d_%H:%M") + ".csv"
