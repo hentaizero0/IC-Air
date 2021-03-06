@@ -95,8 +95,12 @@ def main():
 
             PMData = pmSensor.getData()
             if (PMData != ()):
-                lastPMDataPre = copy.deepcopy(PMData[0])
-                lastPMDataPost = copy.deepcopy(PMData[1])
+                if PMData[0] != None:
+                    lastPMDataPre = copy.deepcopy(PMData[0])
+                # end
+                if PMData[1] != None:
+                    lastPMDataPost = copy.deepcopy(PMData[1])
+                # end
             # end
 
             speed = calculate_fan_speed_rule(lastPMDataPre)
