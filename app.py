@@ -1,3 +1,4 @@
+import FanController
 import time
 import copy
 import re
@@ -7,7 +8,7 @@ import os
 
 from datetime import datetime
 
-# from IoTHub.IoTHub import IoTHub
+from Azure.IoTHub import IoTHub
 from FanController.FanController import FanController
 from PMSensor.PMSensor import PMSensor
 from Thingy.Thingy import Thingy
@@ -64,7 +65,7 @@ def _PID_control(self, PMData):
 # end
 
 def main():
-    # iothub.IoTHub()
+    # iothub = IoTHub()
     fan = FanController()
     pmSensor = PMSensor()
     delegate = Delegate()
@@ -152,6 +153,20 @@ def main():
                 # end
             # end
 
+            # data = {
+            #     "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            #     "pm2.5_pre": lastPMDataPre[0],
+            #     "pm10_pre": lastPMDataPre[1],
+            #     "pm2.5_post": lastPMDataPost[0],
+            #     "pm10_post": lastPMDataPost[1],
+            #     "pressure": lastPress,
+            #     "humidity": lastHumid,
+            #     "temperature": lastTemp,
+            #     "CO2": lastCO2,
+            #     "TVOC ppb": lastTVOC
+            # }
+
+            # iothub.send(data)
             time.sleep(1)
         # end
     except Exception as error:
