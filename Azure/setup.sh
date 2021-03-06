@@ -1,9 +1,5 @@
 #!/bin/bash
 
-sudo apt-get install unixodbc unixodbc-dev freetds-dev freetds-bin tdsodbc -y
+sudo apt-get install libboost-all-dev -y
 
-sudo cp freetds.conf . /etc/freetds/
-sudo cp odbcinst.ini . /etc/
-sudo cp odbc.ini . /etc
-
-sudo pip3 install pyodbc
+sudo pip3 install azure-iot-device azure-iot-hub

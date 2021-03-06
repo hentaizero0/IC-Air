@@ -1,3 +1,3 @@
-from . import Database
+from . import IoTHub
 
-__all__ = ["Database"]
+__all__ = ["IoTHub"]
