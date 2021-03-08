@@ -13,6 +13,7 @@ from FanController.FanController import FanController
 from PMSensor.PMSensor import PMSensor
 from Thingy.Thingy import Thingy
 from Thingy.Delegate import Delegate
+from PID.PID import PID
 
 timer = 0  # seconds
 
@@ -58,10 +59,12 @@ def calculate_fan_speed_rule(PMData):
     return speed
 # end
 
-# TODO: Discuss the PID control with Evan and try to finish it before
-# class.
-def _PID_control(self, PMData):
-    pass
+# PID initializer
+def PID_initialize(p = 10.0, i = 1.0, d = 1.0, setpoint = 5.0, sampleTime = 1.0):
+    pid = PID.PID(p, i, d)
+    pid.SetPoint = setpoint
+    pid.setSampleTime(sampleTime)
+    return pid
 # end
 
 def main():
@@ -70,6 +73,7 @@ def main():
     pmSensor = PMSensor()
     delegate = Delegate()
     thingy = Thingy(delegate)
+    pid = PID_initialize(p = 10.0, i = 1.0, d = 1.0, setpoint = 5.0)
 
     pmSensor.start()
     # iothub.connect()
@@ -87,7 +91,7 @@ def main():
     lastPMDataPost = (-1, -1)
 
     try:
-        logName = os.getcwd() + "/logs/" + datetime.now().strftime("%Y-%m-%d_%H:%M") + ".csv"
+        logName = os.getcwd() + "/logs/" + datetime.now().strftime("%Y-%m-%d_%H_%M") + ".csv"
         csvFile = open(logName, 'w', newline = '')
         csvWriter = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         csvWriter.writerow(["time"]+["pm2.5_pre"]+["pm10_pre"]+["pm2.5_post"]+["pm10_post"]+["pressure"]+["temperature"]+["humidity"]+["co2"]+["tvoc"]+["fan"])
@@ -104,7 +108,10 @@ def main():
                 # end
             # end
 
-            speed = calculate_fan_speed_rule(lastPMDataPre)
+            # speed = calculate_fan_speed_rule(lastPMDataPre)
+            pid.update(lastPMDataPre)
+            speed = pid.output
+            speed = max(min(int(abs(speed)), 100), 0)
             fan.set_speed(speed)
 
             # Actually, here is a call back, but I don't know how to do better.
@@ -142,17 +149,6 @@ def main():
 
             csvWriter.writerow([timeStamp]+[lastPMDataPre[0]]+[lastPMDataPre[1]]+[lastPMDataPost[0]]+[lastPMDataPost[1]]+[lastPress]+[lastTemp]+[lastHumid]+[lastCO2]+[lastTVOC]+[speed])
 
-            print("Pre: {}; Post: {}; Fan {}%.".format(PMData[0], PMData[1], (speed * 100)))
-
-            globals()['timer'] += 1
-            if globals()['timer'] == (1500):
-                globals()['timer'] = 0
-                isThingyConnected = thingy.scan()
-                if (isThingyConnected):
-                    thingy.connect()
-                # end
-            # end
-
             # data = {
             #     "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             #     "pm2.5_pre": lastPMDataPre[0],
@@ -167,6 +163,18 @@ def main():
             # }
 
             # iothub.send(data)
+
+            print("Pre: {}; Post: {}; Fan {}%.".format(PMData[0], PMData[1], (speed * 100)))
+
+            globals()['timer'] += 1
+            if globals()['timer'] == (1500):
+                globals()['timer'] = 0
+                isThingyConnected = thingy.scan()
+                if (isThingyConnected):
+                    thingy.connect()
+                # end
+            # end
+
             time.sleep(1)
         # end
     except Exception as error:

@@ -29,4 +29,8 @@ class FanController:
         self.set_speed(0.0)
     # end
 
+    def get_speed(self):
+        return self._GPIO.get_PWM_dutycycle(self._HSYNC)
+    # end
+
 # end
