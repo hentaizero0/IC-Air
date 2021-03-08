@@ -13,9 +13,11 @@ from FanController.FanController import FanController
 from PMSensor.PMSensor import PMSensor
 from Thingy.Thingy import Thingy
 from Thingy.Delegate import Delegate
-from PID.PID import PID
+from PID import PID
 
 timer = 0  # seconds
+pmThreshold = 2.0
+nightMode = ['23', '00', '01', '02', '03', '04', '05', '06', '07']
 
 # Rule based fan controlling
 def calculate_fan_speed_rule(PMData):
@@ -73,7 +75,7 @@ def main():
     pmSensor = PMSensor()
     delegate = Delegate()
     thingy = Thingy(delegate)
-    pid = PID_initialize(p = 10.0, i = 1.0, d = 1.0, setpoint = 5.0)
+    pid = PID_initialize(p = 10.0, i = 1.0, d = 1.0, setpoint = 2.0)
 
     pmSensor.start()
     # iothub.connect()
@@ -109,10 +111,22 @@ def main():
             # end
 
             # speed = calculate_fan_speed_rule(lastPMDataPre)
-            pid.update(lastPMDataPre)
-            speed = pid.output
-            speed = max(min(int(abs(speed)), 100), 0)
-            fan.set_speed(speed)
+            pid.update(lastPMDataPre[0])
+            speed = max(min(int(abs(pid.output)), 80), 0)
+            print(speed)
+
+            # Auto Stop
+            if (lastPMDataPre[0] < pmThreshold):
+                speed = 0.0
+            # end
+
+            # Night Mode, lower the speed.
+            if (datetime.now().strftime("%H") in nightMode):
+                speed /= 2.0
+            # end
+
+            fan.set_speed((float(speed) / 100))
+            speed = fan.get_speed()
 
             # Actually, here is a call back, but I don't know how to do better.
             if isThingyConnected:
