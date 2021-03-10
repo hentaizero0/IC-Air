@@ -4,9 +4,10 @@ import copy
 import re
 import csv
 import traceback
-# import os
+import os
 
 from datetime import datetime
+from azure.iot.device.exceptions import *
 
 from Azure.IoTHub import IoTHub
 from FanController.FanController import FanController
@@ -70,6 +71,10 @@ def PID_initialize(p = 10.0, i = 1.0, d = 1.0, setpoint = 5.0, sampleTime = 1.0)
 # end
 
 def main():
+    # print ProcessID
+    print("Process ID: {}".format(os.getpid()))
+
+    # create module instances
     iothub = IoTHub()
     fan = FanController()
     pmSensor = PMSensor()
@@ -77,13 +82,14 @@ def main():
     thingy = Thingy(delegate)
     pid = PID_initialize(p = 2.0, i = 1.0, d = 1.0, setpoint = 2.0)
 
+    # start some sensors
     pmSensor.start()
-    iothub.connect()
     isThingyConnected = thingy.scan()
     if (isThingyConnected):
         thingy.connect()
     # end
 
+    # environment variables
     lastPress = -1
     lastTemp = -1
     lastHumid = -1
@@ -93,13 +99,21 @@ def main():
     lastPMDataPost = (-1, -1)
 
     try:
+        # connect to IoTHub
+        iothub.connect()
+
+        # create local log
         logName = "/home/pi/Desktop/IC-Air/logs/" + datetime.now().strftime("%Y-%m-%d_%H_%M") + ".csv"
         csvFile = open(logName, 'w', newline = '')
         csvWriter = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         csvWriter.writerow(["time"]+["pm2.5_pre"]+["pm10_pre"]+["pm2.5_post"]+["pm10_post"]+["pressure"]+["temperature"]+["humidity"]+["co2"]+["tvoc"]+["fan"])
+
+        # main loop
         while True:
+            # time log
             timeStamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
+            # get PM data
             PMData = pmSensor.getData()
             if (PMData != ()):
                 if PMData[0] != None:
@@ -110,24 +124,26 @@ def main():
                 # end
             # end
 
+            # set fan speed based on PM data and PID algorithm
             # speed = calculate_fan_speed_rule(lastPMDataPre)
             pid.update(lastPMDataPre[0])
+
             speed = max(min(int(abs(pid.output)), 80), 0)
-            print(speed)
+
+            if (datetime.now().strftime("%H") in nightMode):
+                speed = max(min(int(abs(pid.output)), 40), 0)
+            # end
 
             # Auto Stop
             if (lastPMDataPre[0] < pmThreshold):
                 speed = 0.0
             # end
 
-            # Night Mode, lower the speed.
-            if (datetime.now().strftime("%H") in nightMode):
-                speed /= 2.0
-            # end
-
             fan.set_speed((float(speed) / 100))
             # speed = fan.get_speed()
+            # print(fan.get_speed())
 
+            # get other environment data
             # Actually, here is a call back, but I don't know how to do better.
             if isThingyConnected:
                 thingy.run()
@@ -161,8 +177,10 @@ def main():
                 # end
             # end
 
+            # write to local log file
             csvWriter.writerow([timeStamp]+[lastPMDataPre[0]]+[lastPMDataPre[1]]+[lastPMDataPost[0]]+[lastPMDataPost[1]]+[lastPress]+[lastTemp]+[lastHumid]+[lastCO2]+[lastTVOC]+[speed])
 
+            # send data to Azure
             data = {
                 "time": timeStamp,
                 "pm2.5_pre": lastPMDataPre[0],
@@ -173,11 +191,13 @@ def main():
                 "humidity": lastHumid,
                 "temperature": lastTemp,
                 "CO2": lastCO2,
-                "TVOC ppb": lastTVOC
+                "TVOC ppb": lastTVOC,
+                "fan": float(speed)
             }
 
             iothub.send(data)
 
+            # iteratively checking and trying to connect to Thingy
             globals()['timer'] += 1
             if globals()['timer'] == (1500):
                 globals()['timer'] = 0
@@ -189,7 +209,13 @@ def main():
 
             time.sleep(1)
         # end
-    except Exception as error:
+    except (ClientError, ConnectionDroppedError, ConnectionFailedError,
+            CredentialError, OperationCancelled, ServiceError) :
+        # IoTHub exceptions, continue the program
+        print("Cannot connect to Azure IoTHub.")
+        traceback.print_exc()
+        pass
+    except Exception:  # other exceptions, stop the program
         traceback.print_exc()
     finally:
         if isThingyConnected:
