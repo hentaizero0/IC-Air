@@ -6,7 +6,7 @@ class FanController:
         self._GPIO = pigpio.pi()
         self._HSYNC = 18  # actual GPIO
         self._GPIO.set_mode(self._HSYNC, pigpio.ALT5)
-        self._GPIO.set_mode(12, pigpio.ALT5)
+        # self._GPIO.set_mode(12, pigpio.ALT5)
         # self._GPIO.read(12)
 
         # set up defalut value
@@ -38,7 +38,7 @@ class FanController:
         # GPIO.setup(12, GPIO.IN)
         # # print(GPIO.input(12))
         # return GPIO.input(12)
-        return self._GPIO.get_PWM_dutycycle(12)
+        # return self._GPIO.get_PWM_dutycycle(12)
     # end
 
 # end

@@ -11,7 +11,7 @@ class Thingy:
 
     def scan(self):
         isFind = True
-        print("# Looking for Thingy advertisment...")
+        # print("# Looking for Thingy advertisment...")
         scanner = btle.Scanner()
         devices = scanner.scan(timeout = 3)
         for dev in devices:
@@ -19,33 +19,33 @@ class Thingy:
             for (adtype, desc, value) in dev.getScanData():
                 # print("  {}, {} = {}".format(adtype, desc, value))
                 if (value == "Thingy"):
-                    print("# Thingy found with address: {}".format(dev.addr))
+                    # print("# Thingy found with address: {}".format(dev.addr))
                     self._MAC_ADDRESS = dev.addr
                 # end
             # end
         # end
 
         if (self._MAC_ADDRESS == None):
-            print("### ERROR: MAC_ADDRESS is not set (and Thingy was not found)...")
+            # print("### ERROR: MAC_ADDRESS is not set (and Thingy was not found)...")
             # exit(0)
             isFind = False
         # end
-        
+
         return isFind
     # end
 
     def connect(self):
-        print("# Connecting to Thingy with address {}...".format(self._MAC_ADDRESS))
+        # print("# Connecting to Thingy with address {}...".format(self._MAC_ADDRESS))
         self._thingy = thingy52.Thingy52(self._MAC_ADDRESS)
         # print("# Setting notification handler to default handler...")
         # self._thingy.setDelegate(thingy52.MyDelegate())
-        print("# Setting notification handler to new handler...")
+        # print("# Setting notification handler to new handler...")
         if self._delegate == None:
             self._delegate = Delegate()
         # end
         self._thingy.setDelegate(self._delegate)
 
-        print("# Configuring and enabling environment notifications...")
+        # print("# Configuring and enabling environment notifications...")
         self._thingy.environment.enable()
         self._thingy.environment.configure(temp_int = 1000, humid_int = 1000, gas_mode_int = 2, press_int = 1000)
         self._thingy.environment.set_temperature_notification(True)
@@ -66,7 +66,7 @@ class Thingy:
     # end
 
     def disconnect(self):
-        print("# Disconnecting...")
+        # print("# Disconnecting...")
         self._thingy.disconnect()
         del self._thingy
     # end

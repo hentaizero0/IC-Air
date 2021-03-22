@@ -1,0 +1,42 @@
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/common/mqtt_transport.py", line 395, in connect
+    host=self._hostname, port=8883, keepalive=self._keep_alive
+  File "/usr/local/lib/python3.7/dist-packages/paho/mqtt/client.py", line 941, in connect
+    return self.reconnect()
+  File "/usr/local/lib/python3.7/dist-packages/paho/mqtt/client.py", line 1075, in reconnect
+    sock = self._create_socket_connection()
+  File "/usr/local/lib/python3.7/dist-packages/paho/mqtt/client.py", line 3546, in _create_socket_connection
+    return socket.create_connection(addr, source_address=source, timeout=self._keepalive)
+  File "/usr/lib/python3.7/socket.py", line 707, in create_connection
+    for res in getaddrinfo(host, port, 0, SOCK_STREAM):
+  File "/usr/lib/python3.7/socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno -3] Temporary failure in name resolution
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/iothub/sync_clients.py", line 34, in handle_result
+    return callback.wait_for_completion()
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/common/evented_callback.py", line 70, in wait_for_completion
+    raise self.exception
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/common/pipeline/pipeline_stages_mqtt.py", line 193, in _run_op
+    self.transport.connect(password=password)
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/common/mqtt_transport.py", line 417, in connect
+    raise exceptions.ConnectionFailedError(cause=e)
+azure.iot.device.common.transport_exceptions.ConnectionFailedError: ConnectionFailedError(None) caused by gaierror(-3, 'Temporary failure in name resolution')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/pi/Desktop/IC-Air/app.py", line 198, in main
+    iothub.send(data)
+  File "/home/pi/Desktop/IC-Air/Azure/IoTHub.py", line 31, in send
+    self._client.send_message(message)
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/patch_documentation.py", line 60, in send_message
+    return super(IoTHubDeviceClient, self).send_message(message)
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/iothub/sync_clients.py", line 308, in send_message
+    handle_result(callback)
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/iothub/sync_clients.py", line 38, in handle_result
+    raise exceptions.ConnectionFailedError(message="Could not connect to IoTHub", cause=e)
+azure.iot.device.exceptions.ConnectionFailedError: ConnectionFailedError('Could not connect to IoTHub') caused by ConnectionFailedError(None)

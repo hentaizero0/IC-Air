@@ -199,11 +199,13 @@ def main():
 
             # iteratively checking and trying to connect to Thingy
             globals()['timer'] += 1
-            if globals()['timer'] == (1500):
+            if globals()['timer'] == (180):
                 globals()['timer'] = 0
-                isThingyConnected = thingy.scan()
-                if (isThingyConnected):
-                    thingy.connect()
+                if isThingyConnected == False:
+                    isThingyConnected = thingy.scan()
+                    if (isThingyConnected):
+                        thingy.connect()
+                    # end
                 # end
             # end
 
@@ -213,9 +215,15 @@ def main():
             CredentialError, OperationCancelled, ServiceError) :
         # IoTHub exceptions, continue the program
         print("Cannot connect to Azure IoTHub.")
+        log = open("/home/pi/Desktop/IC-Air/logs/errorLogs/log_{}.txt".format(datetime.now().strftime("%Y-%m-%d_%H_%M")), 'w')
+        traceback.print_exc(file = log)
+        log.close()
         traceback.print_exc()
         pass
     except Exception:  # other exceptions, stop the program
+        log = open("/home/pi/Desktop/IC-Air/logs/errorLogs/log_{}.txt".format(datetime.now().strftime("%Y-%m-%d_%H_%M")), 'w')
+        traceback.print_exc(file = log)
+        log.close()
         traceback.print_exc()
     finally:
         if isThingyConnected:
