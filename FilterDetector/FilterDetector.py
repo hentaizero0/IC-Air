@@ -58,6 +58,7 @@ class Filter_Clf:
     # end
 
     def predict(self):
+        result = None
         data = pd.read_csv(self.filename)
         data = data_clean(data)
         data = create_feature_vector([data])
@@ -73,12 +74,16 @@ class Filter_Clf:
             res = response.json()["prediction"]
             if res[0] == 1:
                 print("Filter is working.")
+                result = "Filter is working."
             elif res[0] == 0:
                 print("Filter is not working.")
+                result = "Filter is not working."
             else:
                 print("Service Error.")
             # end
         # end
+
+        return result
     # end
 # end
 

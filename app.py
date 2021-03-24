@@ -15,6 +15,7 @@ from PMSensor.PMSensor import PMSensor
 from Thingy.Thingy import Thingy
 from Thingy.Delegate import Delegate
 from PID import PID
+from FilterDetector.FilterDetector import Filter_Clf
 
 timer = 0  # seconds
 pmThreshold = 2.0
@@ -97,6 +98,9 @@ def main():
     lastTVOC = -1
     lastPMDataPre = (-1, -1)
     lastPMDataPost = (-1, -1)
+    tempFile = "/home/pi/Desktop/IC-Air/logs/temp"
+    tempWriter = None
+    tempCSV = None
 
     try:
         # connect to IoTHub
@@ -110,6 +114,13 @@ def main():
 
         # main loop
         while True:
+            # check temporary CSV file.
+            if not os.path.exists(tempFile + ".csv"):
+                tempCSV = open(tempFile + ".csv", 'w', newline = '')
+                tempWriter = csv.writer(tempCSV, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                tempWriter.writerow(["time"]+["pm2.5_pre"]+["pm10_pre"]+["pm2.5_post"]+["pm10_post"]+["pressure"]+["temperature"]+["humidity"]+["co2"]+["tvoc"]+["fan"])
+            # end
+
             # time log
             timeStamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
@@ -180,8 +191,12 @@ def main():
             # write to local log file
             csvWriter.writerow([timeStamp]+[lastPMDataPre[0]]+[lastPMDataPre[1]]+[lastPMDataPost[0]]+[lastPMDataPost[1]]+[lastPress]+[lastTemp]+[lastHumid]+[lastCO2]+[lastTVOC]+[speed])
 
+            if tempWriter:
+                tempWriter.writerow([timeStamp]+[lastPMDataPre[0]]+[lastPMDataPre[1]]+[lastPMDataPost[0]]+[lastPMDataPost[1]]+[lastPress]+[lastTemp]+[lastHumid]+[lastCO2]+[lastTVOC]+[speed])
+            # end
+
             # send data to Azure
-            data = {
+            iothub.send({
                 "time": timeStamp,
                 "pm2.5_pre": lastPMDataPre[0],
                 "pm10_pre": lastPMDataPre[1],
@@ -193,9 +208,7 @@ def main():
                 "CO2": lastCO2,
                 "TVOC ppb": lastTVOC,
                 "fan": float(speed)
-            }
-
-            iothub.send(data)
+            })
 
             # iteratively checking and trying to connect to Thingy
             globals()['timer'] += 1
@@ -207,6 +220,24 @@ def main():
                         thingy.connect()
                     # end
                 # end
+
+                # check filter status
+                filterClassifier = Filter_Clf(log_name = tempFile + ".csv")
+                result = filterClassifier.predict()
+                if result == None:
+                    result = "Services Error."
+                # end
+                filterStatus = IoTHub(connectionString = "HostName=TECHIN514.azure-devices.net;DeviceId=FilterStatus;SharedAccessKey=h3ON+mkM28c3TJBGRE3hnaHzUHubsxPWCVqDKw7TICs=")
+
+                filterStatus.connect()
+
+                filterStatus.send({
+                    "time": timeStamp,
+                    "status": result
+                })
+
+                tempCSV.close()
+                os.remove(tempFile + ".csv")
             # end
 
             time.sleep(1)
@@ -231,6 +262,8 @@ def main():
         # end
         pmSensor.stop()
         fan.shutdown()
+        tempCSV.close()
+        os.remove(tempFile + ".csv")
     # end
 # end
 
