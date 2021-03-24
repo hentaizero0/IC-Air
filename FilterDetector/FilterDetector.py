@@ -68,18 +68,20 @@ class Filter_Clf:
         response = requests.post(Filter_Clf.url, data=payload)
 
         if response.json() == None:
-            print("Service Error. Return None.")
+            # print("Service Error. Return None.")
+            result = None  # Placeholder
         else:
             # print(response.json())
             res = response.json()["prediction"]
             if res[0] == 1:
-                print("Filter is working.")
+                # print("Filter is working.")
                 result = "Filter is working."
             elif res[0] == 0:
-                print("Filter is not working.")
+                # print("Filter is not working.")
                 result = "Filter is not working."
             else:
-                print("Service Error.")
+                # print("Service Error.")
+                result = None  # Placeholder
             # end
         # end
 
