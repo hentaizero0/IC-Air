@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/iothub/sync_clients.py", line 34, in handle_result
+    return callback.wait_for_completion()
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/common/evented_callback.py", line 70, in wait_for_completion
+    raise self.exception
+azure.iot.device.common.transport_exceptions.UnauthorizedError: UnauthorizedError('Connection Refused: not authorised.')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/pi/Desktop/IC-Air/app.py", line 210, in main
+    "fan": float(speed)
+  File "/home/pi/Desktop/IC-Air/Azure/IoTHub.py", line 31, in send
+    self._client.send_message(message)
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/patch_documentation.py", line 60, in send_message
+    return super(IoTHubDeviceClient, self).send_message(message)
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/iothub/sync_clients.py", line 308, in send_message
+    handle_result(callback)
+  File "/usr/local/lib/python3.7/dist-packages/azure/iot/device/iothub/sync_clients.py", line 40, in handle_result
+    raise exceptions.CredentialError(message="Credentials invalid, could not connect", cause=e)
+azure.iot.device.exceptions.CredentialError: CredentialError('Credentials invalid, could not connect') caused by UnauthorizedError('Connection Refused: not authorised.')

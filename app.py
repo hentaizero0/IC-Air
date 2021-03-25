@@ -17,7 +17,7 @@ from Thingy.Delegate import Delegate
 from PID import PID
 from FilterDetector.FilterDetector import Filter_Clf
 
-timer = 0  # seconds
+timer = 1  # seconds
 pmThreshold = 2.0
 nightMode = ['23', '00', '01', '02', '03', '04', '05', '06', '07']
 
@@ -77,6 +77,7 @@ def main():
 
     # create module instances
     iothub = IoTHub()
+    filterStatus = IoTHub(connectionString = "HostName=TECHIN514.azure-devices.net;DeviceId=FilterStatus;SharedAccessKey=h3ON+mkM28c3TJBGRE3hnaHzUHubsxPWCVqDKw7TICs=")
     fan = FanController()
     pmSensor = PMSensor()
     delegate = Delegate()
@@ -105,6 +106,7 @@ def main():
     try:
         # connect to IoTHub
         iothub.connect()
+        filterStatus.connect()
 
         # create local log
         logName = "/home/pi/Desktop/IC-Air/logs/" + datetime.now().strftime("%Y-%m-%d_%H_%M") + ".csv"
@@ -213,31 +215,30 @@ def main():
             # iteratively checking and trying to connect to Thingy
             globals()['timer'] += 1
             if globals()['timer'] == (180):
-                globals()['timer'] = 0
-                if isThingyConnected == False:
-                    isThingyConnected = thingy.scan()
-                    if (isThingyConnected):
-                        thingy.connect()
-                    # end
-                # end
-
                 # check filter status
+                if tempCSV:
+                    tempCSV.close()
+                # end
                 filterClassifier = Filter_Clf(log_name = tempFile + ".csv")
                 result = filterClassifier.predict()
                 if result == None:
                     result = "Services Error."
                 # end
-                filterStatus = IoTHub(connectionString = "HostName=TECHIN514.azure-devices.net;DeviceId=FilterStatus;SharedAccessKey=h3ON+mkM28c3TJBGRE3hnaHzUHubsxPWCVqDKw7TICs=")
-
-                filterStatus.connect()
 
                 filterStatus.send({
                     "time": timeStamp,
                     "status": result
                 })
 
-                tempCSV.close()
                 os.remove(tempFile + ".csv")
+
+                if isThingyConnected == False:
+                    isThingyConnected = thingy.scan()
+                    if (isThingyConnected):
+                        thingy.connect()
+                    # end
+                # end
+                globals()['timer'] = 1
             # end
 
             time.sleep(1)
@@ -262,8 +263,10 @@ def main():
         # end
         pmSensor.stop()
         fan.shutdown()
-        tempCSV.close()
-        os.remove(tempFile + ".csv")
+        if tempCSV:
+            tempCSV.close()
+            os.remove(tempFile + ".csv")
+        # end
     # end
 # end
 
