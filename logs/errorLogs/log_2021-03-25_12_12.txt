@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/home/pi/Desktop/IC-Air/app.py", line 228, in main
+    result = filterClassifier.predict()
+  File "/home/pi/Desktop/IC-Air/FilterDetector/FilterDetector.py", line 62, in predict
+    data = pd.read_csv(self.filename)
+  File "/usr/local/lib/python3.7/dist-packages/pandas/io/parsers.py", line 610, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/usr/local/lib/python3.7/dist-packages/pandas/io/parsers.py", line 462, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/usr/local/lib/python3.7/dist-packages/pandas/io/parsers.py", line 819, in __init__
+    self._engine = self._make_engine(self.engine)
+  File "/usr/local/lib/python3.7/dist-packages/pandas/io/parsers.py", line 1050, in _make_engine
+    return mapping[engine](self.f, **self.options)  # type: ignore[call-arg]
+  File "/usr/local/lib/python3.7/dist-packages/pandas/io/parsers.py", line 1898, in __init__
+    self._reader = parsers.TextReader(self.handles.handle, **kwds)
+  File "pandas/_libs/parsers.pyx", line 521, in pandas._libs.parsers.TextReader.__cinit__
+pandas.errors.EmptyDataError: No columns to parse from file

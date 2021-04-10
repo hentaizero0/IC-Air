@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "app.py", line 192, in main
+    tempWriter.writerow([timeStamp]+[lastPMDataPre[0]]+[lastPMDataPre[1]]+[lastPMDataPost[0]]+[lastPMDataPost[1]]+[lastPress]+[lastTemp]+[lastHumid]+[lastCO2]+[lastTVOC]+[speed])
+UnboundLocalError: local variable 'tempWriter' referenced before assignment
